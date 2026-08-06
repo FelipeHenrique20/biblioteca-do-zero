@@ -1,0 +1,23 @@
+{
+  "compilerOptions": {
+    // Layout de arquivos
+    "rootDir": "./src",
+    "outDir": "./dist",
+
+    // Ambiente: gera código compatível com Node.js
+    "module": "commonjs",
+    "target": "ES2020",
+    "lib": ["ES2020"],
+    "types": ["node"],
+
+    // Facilita interoperar import/require
+    "esModuleInterop": true,
+    "forceConsistentCasingInFileNames": true,
+    "resolveJsonModule": true,
+
+    // Deixa o TypeScript rigoroso (pega mais erros antes de rodar)
+    "strict": true,
+    "skipLibCheck": true
+  },
+  "include": ["src/**/*.ts"]
+}
