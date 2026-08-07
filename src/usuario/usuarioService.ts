@@ -52,7 +52,13 @@ export function atualizarUsuario(id: number, nome: string, email: string) {
 // Função para REMOVER um usario 
 export function removerUsuario(id: number) {
     buscarUsuarioPeloId(id);
-    
-    const stmt = db.prepare("DELETE FROM usuarios WHERE id = ?");
-    stmt.run(id);
+    const stmt = db.prepare("SELECT COUNT(*) as total FROM emprestimos WHERE usuarioId = ?");
+    const resultado = stmt.get(id) as { total: number };
+
+    if (resultado.total > 0) {
+        throw new AppError("Não é possivel remover um usuário que possui empréstimos (mesmo já devolvidos)", 409);
+    }
+
+    const deleteStmt = db.prepare("DELETE FROM usuarios WHERE id = ?");
+    deleteStmt.run(id);
 }

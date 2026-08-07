@@ -69,6 +69,13 @@ export function atualizarLivro(id: number, titulo: string, isbn: string, quantid
 export function removerLivro(id: number) {
     buscarLivroPorId(id);
     
-    const stmt = db.prepare("DELETE FROM livros WHERE id = ?");
-    stmt.run(id);
+    const stmt = db.prepare("SELECT COUNT(*) as total FROM emprestimos WHERE livroId = ?");
+    const resultado = stmt.get(id) as { total: number };
+
+    if (resultado.total > 0) {
+        throw new AppError("Não é possivel remover um livro que possui empréstimos (mesmo já devolvido)", 409);
+    }
+
+    const deleteStmt = db.prepare("DELETE FROM livros WHERE id = ?");
+    deleteStmt.run(id);
 }
