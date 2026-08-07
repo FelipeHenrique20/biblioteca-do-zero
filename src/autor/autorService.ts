@@ -55,7 +55,12 @@ export function atualizarAutor(id: number, nome: string) {
 // Função para REMOVER um autor
 export function removerAutor(id: number) {
     buscarAutorPorId(id);
+    const stmt = db.prepare("SELECT COUNT(*) as total FROM livros WHERE autorId = ?");
+    const resultado = stmt.get(id) as { total: number };
 
-    const stmt = db.prepare("DELETE FROM autores WHERE id = ?");
-    stmt.run(id);
+    if (resultado.total > 0) {
+        throw new AppError("Não é possivel remover um autor que possui livros cadastrados", 409);
+    }
+    const deleteStmt = db.prepare("DELETE FROM autores WHERE id = ?");
+    deleteStmt.run(id);
 }
