@@ -42,7 +42,7 @@ export function remover(req: Request, res: Response) {
     try {
         const id = Number(req.params.id);
         removerUsuario(id);
-        return res.status(204).send;
+        return res.status(204).send();
     } catch(error) {
         tratarErro(error, res);
     }
