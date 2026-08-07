@@ -19,6 +19,21 @@ export function buscarAutorPorId(id: number) {
     return autor;
 }
 
+// Validação de NOME
+function validarNome(nome: string): string {
+    if (!nome || typeof nome !== "string") {
+        throw new AppError("O campo 'nome' é obrigatório", 400);
+    }
+
+    const nomeFormatado = nome.trim().replace(/\s+/g," ");
+
+    if (nomeFormatado.length === 0) {
+        throw new AppError("O campo 'nome' é obrigatório", 400);
+    }
+
+    return nomeFormatado;
+}
+
 // Função para CRIAR um novo autor
 export function criarAutor(nome: string) {
     if (!nome || typeof nome !== "string" || nome.trim().length === 0) {
@@ -26,7 +41,7 @@ export function criarAutor(nome: string) {
     }
 
     const stmt = db.prepare("INSERT INTO autores (nome) VALUES (?)");
-    const info = stmt.run(nome);
+    const info = stmt.run(validarNome(nome));
     return buscarAutorPorId(Number(info.lastInsertRowid));
 }
 
@@ -39,7 +54,7 @@ export function atualizarAutor(id: number, nome: string) {
     buscarAutorPorId(id);
 
     const stmt = db.prepare("UPDATE autores SET nome = ? WHERE id = ?");
-    stmt.run();
+    stmt.run(validarNome(nome), id);
     return buscarAutorPorId(id);
 }
 
