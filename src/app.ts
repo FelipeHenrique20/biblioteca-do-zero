@@ -1,12 +1,11 @@
 import express from "express";
-import { initDatabase } from "./database/connection";;
-
+import cors from "cors";
+import { initDatabase } from "./database/connection";
 import routes from "./routes";
 
-// Criar a aplicação Express
 const app = express();
 
-// // Middleware para permitir que o Express entenda JSON no corpo das requisições
+app.use(cors());
 app.use(express.json());
 
 // Inicializa o banco de dados
