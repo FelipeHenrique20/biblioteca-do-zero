@@ -36,25 +36,19 @@ function validarNome(nome: string): string {
 
 // Função para CRIAR um novo autor
 export function criarAutor(nome: string) {
-    if (!nome || typeof nome !== "string" || nome.trim().length === 0) {
-        throw new AppError("O campo 'nome' é obrigatório", 400);
-    }
-
+    const nomeValidado = validarNome(nome);
     const stmt = db.prepare("INSERT INTO autores (nome) VALUES (?)");
-    const info = stmt.run(validarNome(nome));
+    const info = stmt.run(nomeValidado);
     return buscarAutorPorId(Number(info.lastInsertRowid));
 }
 
 // Função para ATUALIZAR um autor existente
 export function atualizarAutor(id: number, nome: string) {
-    if (!nome || typeof nome !== "string" || nome.trim().length === 0) {
-        throw new AppError("O campo 'nome' é obrigatório", 400);
-    }
-
     buscarAutorPorId(id);
-
+    
+    const nomeValidado = validarNome(nome);
     const stmt = db.prepare("UPDATE autores SET nome = ? WHERE id = ?");
-    stmt.run(validarNome(nome), id);
+    stmt.run(nomeValidado, id);
     return buscarAutorPorId(id);
 }
 
