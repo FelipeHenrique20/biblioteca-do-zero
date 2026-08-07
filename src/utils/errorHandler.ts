@@ -3,7 +3,7 @@ import { AppError } from "../errors/errors";
 
 export function tratarErro(error: unknown, res: Response) {
     if (error instanceof AppError) {
-        return res.status(error.statusCode).json({ erro: error.message });
+        return res.status(error.statusCode).json({ error: error.message });
     }
 
     console.error(error);
