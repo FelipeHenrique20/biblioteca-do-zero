@@ -32,9 +32,12 @@ function validarAutorExistente(autorId: number) {
 function validarDadosLivro(titulo: string, isbn: string, quantidade: number, autorId: number) {
     if (!titulo || typeof titulo !== "string" || titulo.trim().length === 0) {
         throw new AppError("O campo 'titulo' é obrigatório", 400);
-    }
+    } 
     if (!isbn || typeof isbn !== "string" || isbn.trim().length === 0) {
         throw new AppError("O campo 'isbn' é obrigatório", 400);
+    }
+    if (/\s/.test(isbn)) {
+        throw new AppError("O ISBN não pode conter espaços", 400);
     }
     if (quantidade === undefined || typeof quantidade !== "number" || quantidade < 0) {
         throw new AppError("O campo 'quantidade' é obrigatório e deve ser um número não negativo", 400);
@@ -42,26 +45,31 @@ function validarDadosLivro(titulo: string, isbn: string, quantidade: number, aut
     if (!autorId || typeof autorId !== "number" || autorId <= 0) {
         throw new AppError("O campo 'autorId' é obrigatório e deve ser um número positivo", 400);
     }
+
+    return {
+        titulo: titulo.trim().replace(/\s+/g, " "),
+        isbn
+    };
 }
 
 // Função para CRIAR um novo livro
 export function criarLivro(titulo: string, isbn: string, quantidade: number, autorId: number) {
-    validarDadosLivro(titulo, isbn, quantidade, autorId);
+    const dados = validarDadosLivro(titulo, isbn, quantidade, autorId);
     validarAutorExistente(autorId);
 
     const stmt = db.prepare("INSERT INTO livros (titulo, isbn, quantidade, quantidadeDisponivel, autorId) VALUES (?, ?, ?, ?, ?)");
-    const info = stmt.run(titulo, isbn, quantidade, quantidade, autorId);
+    const info = stmt.run(dados.titulo, dados.isbn, quantidade, quantidade, autorId);
     return buscarLivroPorId(Number(info.lastInsertRowid));
 }
 
 // Função para ATUALIZAR um livro existente
 export function atualizarLivro(id: number, titulo: string, isbn: string, quantidade: number, autorId: number) {
     buscarLivroPorId(id);
-    validarDadosLivro(titulo, isbn, quantidade, autorId);
+    const dados = validarDadosLivro(titulo, isbn, quantidade, autorId);
     validarAutorExistente(autorId);
 
     const stmt = db.prepare("UPDATE livros SET titulo = ?, isbn = ?, quantidade = ?, autorId = ? WHERE id = ?");
-    stmt.run(titulo, isbn, quantidade, autorId, id);
+    stmt.run(dados.titulo, dados.isbn, quantidade, autorId, id);
     return buscarLivroPorId(id);
 }
 
