@@ -5,9 +5,12 @@ import routes from "./routes";
 
 const app = express();
 
+app.disable("x-powered-by");
+
 app.use(cors({
     origin: "http://localhost:5173"
 }));
+
 app.use(express.json());
 
 initDatabase();
