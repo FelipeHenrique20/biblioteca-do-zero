@@ -26,14 +26,22 @@ function validarDadosUsuario(nome: string, email: string) {
     if (!email || typeof email !== "string" || email.trim().length === 0) {
         throw new AppError("O campo 'email' é obrigatório", 400);
     }
+    if (/\s/.test(email)) {
+        throw new AppError("O email não pode conter espaços", 400);
+    }
+
+    return {
+        nome: nome.trim().replace(/\s+/g, " "),
+        email
+    };
 }
 
 // Função para CRIAR um novo usuario
 export function criarUsuario(nome: string, email: string) {
-    validarDadosUsuario(nome, email);
+    const dados = validarDadosUsuario(nome, email);
     
     const stmt = db.prepare("INSERT INTO usuarios (nome, email) VALUES (?, ?)");
-    const info = stmt.run(nome, email);
+    const info = stmt.run(dados.nome, dados.email);
 
     return buscarUsuarioPeloId(Number(info.lastInsertRowid));
 }
@@ -41,10 +49,10 @@ export function criarUsuario(nome: string, email: string) {
 // Função para ATUALIZAR um usuario existente
 export function atualizarUsuario(id: number, nome: string, email: string) {
     buscarUsuarioPeloId(id);
-    validarDadosUsuario(nome, email);
+    const dados = validarDadosUsuario(nome, email);
 
     const stmt = db.prepare("UPDATE usuarios SET nome = ?, email = ? WHERE id = ?");
-    stmt.run(nome, email, id);
+    stmt.run(dados.nome, dados.email, id);
 
     return buscarUsuarioPeloId(id)
 }
