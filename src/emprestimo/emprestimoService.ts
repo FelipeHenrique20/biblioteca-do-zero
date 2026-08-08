@@ -16,7 +16,7 @@ export function listarEmprestimosAtivos() {
 }
 
 function validarId(id: number) {
-    if (isNaN(id) || id <= 0) {
+    if (Number.isNaN(id) || id <= 0) {
         throw new AppError("ID inválido", 400);
     }
 }
