@@ -5,10 +5,11 @@ import routes from "./routes";
 
 const app = express();
 
-app.use(cors());
+app.use(cors({
+    origin: "http://localhost:5173"
+}));
 app.use(express.json());
 
-// Inicializa o banco de dados
 initDatabase();
 
 app.get("/", (req, res) => {
