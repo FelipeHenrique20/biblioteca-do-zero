@@ -57,6 +57,12 @@ export function criarLivro(titulo: string, isbn: string, quantidade: number, aut
     const dados = validarDadosLivro(titulo, isbn, quantidade, autorId);
     validarAutorExistente(autorId);
 
+    const stmtBusca = db.prepare("SELECT id FROM livros WHERE isbn = ?");
+    const livroExistente = stmtBusca.get(dados.isbn);
+    if (livroExistente) {
+        throw new AppError("Já existe um livro cadastrado com esse ISBN", 409);
+    }
+
     const stmt = db.prepare("INSERT INTO livros (titulo, isbn, quantidade, quantidadeDisponivel, autorId) VALUES (?, ?, ?, ?, ?)");
     const info = stmt.run(dados.titulo, dados.isbn, quantidade, quantidade, autorId);
     return buscarLivroPorId(Number(info.lastInsertRowid));
@@ -67,6 +73,12 @@ export function atualizarLivro(id: number, titulo: string, isbn: string, quantid
     buscarLivroPorId(id);
     const dados = validarDadosLivro(titulo, isbn, quantidade, autorId);
     validarAutorExistente(autorId);
+
+    const stmtBusca = db.prepare("SELECT id FROM livros WHERE isbn = ? AND id != ?");
+    const livroExistente = stmtBusca.get(dados.isbn, id);
+    if (livroExistente) {
+        throw new AppError("Já existe outro livro cadastrado com esse ISBN", 409);
+    }
 
     const stmt = db.prepare("UPDATE livros SET titulo = ?, isbn = ?, quantidade = ?, autorId = ? WHERE id = ?");
     stmt.run(dados.titulo, dados.isbn, quantidade, autorId, id);
