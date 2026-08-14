@@ -40,6 +40,12 @@ function validarDadosUsuario(nome: string, email: string) {
 export function criarUsuario(nome: string, email: string) {
     const dados = validarDadosUsuario(nome, email);
     
+    const stmtBusca = db.prepare("SELECT id FROM usuarios WHERE email =?");
+    const usuarioExistente = stmtBusca.get(email);
+    if (usuarioExistente) {
+        throw new AppError("Já existe um usuário cadastrado com esse e-mail", 409);
+    }
+
     const stmt = db.prepare("INSERT INTO usuarios (nome, email) VALUES (?, ?)");
     const info = stmt.run(dados.nome, dados.email);
 
@@ -51,6 +57,12 @@ export function atualizarUsuario(id: number, nome: string, email: string) {
     buscarUsuarioPeloId(id);
     const dados = validarDadosUsuario(nome, email);
 
+    const stmtBusca = db.prepare("SELECT id FROM usuarios WHERE email = ? AND id != ?");
+    const usuarioExistente = stmtBusca.get(email, id);
+    if (usuarioExistente) {
+        throw new AppError("Já existe um usuário cadastrado com esse e-mail", 409);
+    }
+    
     const stmt = db.prepare("UPDATE usuarios SET nome = ?, email = ? WHERE id = ?");
     stmt.run(dados.nome, dados.email, id);
 
