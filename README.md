@@ -1,5 +1,7 @@
 # 📚 Biblioteca do Zero
 
+> 🔗 Front-end deste projeto: [biblioteca-front](https://github.com/FelipeHenrique20/biblioteca-front)
+
 API REST para gerenciamento de uma biblioteca, desenvolvida com **Node.js, Express e TypeScript**.
 
 O projeto tem como objetivo aplicar conceitos de desenvolvimento backend, como criação de APIs, organização de código, separação de responsabilidades, tratamento de erros e boas práticas utilizando TypeScript.
