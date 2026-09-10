@@ -53,6 +53,18 @@ export function initDatabase() {
             FOREIGN KEY (usuarioId) REFERENCES usuarios(id)
         );
     `)
+
+    // CONTAS
+    db.exec(`
+        CREATE TABLE IF NOT EXISTS contas (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            nome TEXT NOT NULL,
+            email TEXT NOT NULL UNIQUE,
+            senhaHash TEXT NOT NULL,
+            role TEXT NOT NULL DEFAULT 'comum',
+            createdAt TEXT NOT NULL DEFAULT (datetime('now'))
+        );
+    `);
     
     console.log("Banco de dados inicializado com sucesso.");
 }
