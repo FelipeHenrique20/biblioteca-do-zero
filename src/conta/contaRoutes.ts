@@ -1,8 +1,9 @@
 import { Router } from "express";
-import { registrar } from "./contaController";
+import { registrar, fazerLogin } from "./contaController";
 
 const router = Router();
 
 router.post("/registro", registrar);
+router.post("/login", fazerLogin);
 
 export default router;

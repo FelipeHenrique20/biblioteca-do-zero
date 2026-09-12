@@ -1,6 +1,7 @@
 import { db } from "../database/connection";
 import { AppError } from "../errors/errors";
 import bcrypt from "bcrypt";
+import jwt from "jsonwebtoken";
 
 const SALT_ROUNDS = 10;
 
@@ -58,4 +59,35 @@ export function buscarContaPorId(id: number) {
 export function buscarContaPorEmail(email: string) {
     const stmt = db.prepare("SELECT * FROM contas WHERE email = ?");
     return stmt.get(email) as unknown as Conta | undefined;
+}
+
+const JWT_SECRET = process.env.JWT_SECRET as string;
+
+export function login(email: string, senha: string) {
+    if (!email || !senha) {
+        throw new AppError("E-mail e senha são obrigatórios", 400);
+    }
+
+    const conta = buscarContaPorEmail(email);
+
+    if (!conta) {
+        throw new AppError("E-mail ou senha inválidos", 401);
+    }
+
+    const senhaCorreta = bcrypt.compareSync(senha, conta.senhaHash);
+
+    if (!senhaCorreta) {
+        throw new AppError("E-mail ou senha inválidos", 401);
+    }
+
+    const token = jwt.sign(
+        { id: conta.id, nome: conta.nome, role: conta.role },
+        JWT_SECRET,
+        { expiresIn: "8h" }
+    );
+
+    return {
+        token,
+        conta: { id: conta.id, nome: conta.nome, email: conta.email, role: conta.role },
+    };
 }
