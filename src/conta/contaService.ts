@@ -91,3 +91,26 @@ export function login(email: string, senha: string) {
         conta: { id: conta.id, nome: conta.nome, email: conta.email, role: conta.role },
     };
 }
+
+export function listarContas() {
+    const stmt = db.prepare("SELECT id, nome, email, role, createdAt FROM contas ORDER BY nome");
+    return stmt.all();
+}
+
+export function promoverConta(id: number) {
+    buscarContaPorId(id);
+
+    const stmt = db.prepare("UPDATE contas SET role = 'admin' WHERE id = ?");
+    stmt.run(id);
+
+    return buscarContaPorId(id);
+}
+
+export function rebaixarConta(id: number) {
+    buscarContaPorId(id);
+
+    const stmt = db.prepare("UPDATE contas SET role = 'comum' WHERE id = ?");
+    stmt.run(id);
+
+    return buscarContaPorId(id);
+}
