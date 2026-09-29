@@ -1,5 +1,9 @@
 # 📚 Biblioteca do Zero
 
+> 🌐 **API em produção:** [biblioteca-api-9u0g.onrender.com](https://biblioteca-api-9u0g.onrender.com)
+> 
+> ⚠️ Hospedada em plano gratuito: o serviço "dorme" após 15 minutos sem uso e pode levar até 1 minuto para responder na primeira requisição após esse período. Os dados de demonstração são recriados automaticamente a cada reinicialização.
+
 > 🔗 Front-end deste projeto: [biblioteca-front](https://github.com/FelipeHenrique20/biblioteca-front)
 
 API REST para gerenciamento de uma biblioteca, desenvolvida com **Node.js, Express e TypeScript**.
