@@ -5,6 +5,7 @@ import livroRoutes from "../livro/livroRoutes";
 import usuarioRoutes from "../usuario/usuarioRoutes";
 import emprestimoRoutes from "../emprestimo/emprestimoRoutes";
 import contaRoutes from "../conta/contaRoutes";
+import categoriaRoutes from "../categoria/categoriaRoutes";
 
 const routes = Router();
 
@@ -13,5 +14,6 @@ routes.use("/livros", livroRoutes);
 routes.use("/usuarios", usuarioRoutes);
 routes.use("/emprestimos", emprestimoRoutes);
 routes.use("/contas", contaRoutes);
+routes.use("/categorias", categoriaRoutes);
 
 export default routes;
