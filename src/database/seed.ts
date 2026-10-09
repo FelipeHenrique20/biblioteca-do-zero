@@ -17,6 +17,15 @@ export function popularDadosIniciais() {
         }
     }
 
+    const categorias = db.prepare("SELECT COUNT(*) as total FROM categorias").get() as { total: number };
+
+    if (categorias.total === 0) {
+        const nomes = ["Fantasia", "Romance", "Ficção Científica", "Clássico", "Suspense"];
+        const inserirCategoria = db.prepare("INSERT INTO categorias (nome) VALUES (?)");
+        nomes.forEach((nome) => inserirCategoria.run(nome));
+        console.log("Categorias iniciais criadas.");
+    }
+
     const autores = db.prepare("SELECT COUNT(*) as total FROM autores").get() as { total: number };
 
     if (autores.total === 0) {

@@ -30,7 +30,22 @@ export function initDatabase() {
             FOREIGN KEY (autorId) REFERENCES autores(id)
         );
     `)
-    
+
+    // CATEGORIAS
+    db.exec(`
+        CREATE TABLE IF NOT EXISTS categorias (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            nome TEXT NOT NULL UNIQUE
+        );
+    `)
+
+    // Adiciona a referência de categoria no livro (coluna nova, tabela já existente)
+    try {
+        db.exec(`ALTER TABLE livros ADD COLUMN categoriaId INTEGER REFERENCES categorias(id);`);
+    } catch {
+        // coluna já existe, ignora
+    }
+
     // USUARIOS
     db.exec(`
         CREATE TABLE IF NOT EXISTS usuarios (
