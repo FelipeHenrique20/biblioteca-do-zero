@@ -33,11 +33,14 @@ export function popularDadosIniciais() {
         const tolkien = Number(inserirAutor.run("J. R. R. Tolkien").lastInsertRowid);
         const machado = Number(inserirAutor.run("Machado de Assis").lastInsertRowid);
 
+        const fantasia = db.prepare("SELECT id FROM categorias WHERE nome = ?").get("Fantasia") as { id: number };
+        const classico = db.prepare("SELECT id FROM categorias WHERE nome = ?").get("Clássico") as { id: number };
+
         const inserirLivro = db.prepare(
-            "INSERT INTO livros (titulo, isbn, quantidade, quantidadeDisponivel, autorId) VALUES (?, ?, ?, ?, ?)"
+            "INSERT INTO livros (titulo, isbn, quantidade, quantidadeDisponivel, autorId, categoriaId) VALUES (?, ?, ?, ?, ?, ?)"
         );
-        inserirLivro.run("O Hobbit", "9788578277109", 5, 5, tolkien);
-        inserirLivro.run("Dom Casmurro", "9788535910663", 3, 3, machado);
+        inserirLivro.run("O Hobbit", "9788578277109", 5, 5, tolkien, fantasia.id);
+        inserirLivro.run("Dom Casmurro", "9788535910663", 3, 3, machado, classico.id);
 
         db.prepare("INSERT INTO usuarios (nome, email) VALUES (?, ?)").run(
             "Maria Silva",

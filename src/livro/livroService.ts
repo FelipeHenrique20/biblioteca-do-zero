@@ -1,6 +1,7 @@
 import { db } from "../database/connection";
 import { AppError } from "../errors/errors";
 import{ buscarAutorPorId } from "../autor/autorService"
+import { buscarCategoriaPorId } from "../categoria/categoriaService";
 
 // Função para LISTAR todos os livros
 export function listarLivros() {
@@ -53,9 +54,10 @@ function validarDadosLivro(titulo: string, isbn: string, quantidade: number, aut
 }
 
 // Função para CRIAR um novo livro
-export function criarLivro(titulo: string, isbn: string, quantidade: number, autorId: number) {
+export function criarLivro(titulo: string, isbn: string, quantidade: number, autorId: number, categoriaId?: number | null) {
     const dados = validarDadosLivro(titulo, isbn, quantidade, autorId);
     validarAutorExistente(autorId);
+    validarCategoriaExistente(categoriaId);
 
     const stmtBusca = db.prepare("SELECT id FROM livros WHERE isbn = ?");
     const livroExistente = stmtBusca.get(dados.isbn);
@@ -63,16 +65,17 @@ export function criarLivro(titulo: string, isbn: string, quantidade: number, aut
         throw new AppError("Já existe um livro cadastrado com esse ISBN", 409);
     }
 
-    const stmt = db.prepare("INSERT INTO livros (titulo, isbn, quantidade, quantidadeDisponivel, autorId) VALUES (?, ?, ?, ?, ?)");
-    const info = stmt.run(dados.titulo, dados.isbn, quantidade, quantidade, autorId);
+    const stmt = db.prepare("INSERT INTO livros (titulo, isbn, quantidade, quantidadeDisponivel, autorId, categoriaId) VALUES (?, ?, ?, ?, ?, ?)");
+    const info = stmt.run(dados.titulo, dados.isbn, quantidade, quantidade, autorId, categoriaId ?? null);
     return buscarLivroPorId(Number(info.lastInsertRowid));
 }
 
 // Função para ATUALIZAR um livro existente
-export function atualizarLivro(id: number, titulo: string, isbn: string, quantidade: number, autorId: number) {
+export function atualizarLivro(id: number, titulo: string, isbn: string, quantidade: number, autorId: number, categoriaId?: number | null) {
     buscarLivroPorId(id);
     const dados = validarDadosLivro(titulo, isbn, quantidade, autorId);
     validarAutorExistente(autorId);
+    validarCategoriaExistente(categoriaId);
 
     const stmtBusca = db.prepare("SELECT id FROM livros WHERE isbn = ? AND id != ?");
     const livroExistente = stmtBusca.get(dados.isbn, id);
@@ -80,8 +83,8 @@ export function atualizarLivro(id: number, titulo: string, isbn: string, quantid
         throw new AppError("Já existe outro livro cadastrado com esse ISBN", 409);
     }
 
-    const stmt = db.prepare("UPDATE livros SET titulo = ?, isbn = ?, quantidade = ?, autorId = ? WHERE id = ?");
-    stmt.run(dados.titulo, dados.isbn, quantidade, autorId, id);
+    const stmt = db.prepare("UPDATE livros SET titulo = ?, isbn = ?, quantidade = ?, autorId = ?, categoriaId = ? WHERE id = ?");
+    stmt.run(dados.titulo, dados.isbn, quantidade, autorId, categoriaId ?? null, id);
     return buscarLivroPorId(id);
 }
 
@@ -98,4 +101,14 @@ export function removerLivro(id: number) {
 
     const deleteStmt = db.prepare("DELETE FROM livros WHERE id = ?");
     deleteStmt.run(id);
+}
+
+function validarCategoriaExistente(categoriaId?: number | null) {
+    if (categoriaId === undefined || categoriaId === null) return;
+
+    try {
+        buscarCategoriaPorId(categoriaId);
+    } catch {
+        throw new AppError("A categoria informada não existe", 400);
+    }
 }

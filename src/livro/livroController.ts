@@ -19,8 +19,8 @@ export function buscarPorId(req: Request, res: Response) {
 
 export function criar(req: Request, res: Response) {
     try {
-        const { titulo, isbn, quantidade, autorId } = req.body;
-        const livro = criarLivro(titulo, isbn, quantidade, autorId);
+        const { titulo, isbn, quantidade, autorId, categoriaId } = req.body;
+        const livro = criarLivro(titulo, isbn, quantidade, autorId, categoriaId);
         return res.status(201).json(livro);
     } catch (error) {
         tratarErro(error, res);
@@ -30,8 +30,8 @@ export function criar(req: Request, res: Response) {
 export function atualizar(req: Request, res: Response) {
     try {
         const id = Number(req.params.id);
-        const { titulo, isbn, quantidade, autorId } = req.body;
-        const livroAtualizado = atualizarLivro(id, titulo, isbn, quantidade, autorId);
+        const { titulo, isbn, quantidade, autorId, categoriaId } = req.body;
+        const livroAtualizado = atualizarLivro(id, titulo, isbn, quantidade, autorId, categoriaId);
         return res.json(livroAtualizado);
     } catch (error) {
         tratarErro(error, res);
