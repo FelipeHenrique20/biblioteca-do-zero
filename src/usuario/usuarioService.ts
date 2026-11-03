@@ -3,13 +3,13 @@ import { AppError } from "../errors/errors"
 
 // Função para Listar todos os usuarios
 export function listarUsuarios() {
-    const stmt = db.prepare("SELECT * FROM usuarios ORDER by nome");
+    const stmt = db.prepare("SELECT id, nome, email, createdAt FROM usuarios ORDER by nome");
     return stmt.all();
 }
 
 // Função para BUSCAR um usuario pelo id
 export function buscarUsuarioPeloId(id: number) {
-    const stmt = db.prepare("SELECT * FROM usuarios WHERE id = ?");
+    const stmt = db.prepare("SELECT id, nome, email, createdAt FROM usuarios WHERE id = ?");
     const usuario = stmt.get(id);
 
     if (!usuario) {
