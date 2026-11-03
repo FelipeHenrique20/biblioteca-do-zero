@@ -8,7 +8,7 @@ export interface RequestAutenticado extends Request {
     conta?: {
         id: number;
         nome: string;
-        role: "admin" | "comum";
+        role: "admin" | "comum" | "leitor";
     };
 }
 
@@ -25,7 +25,7 @@ export function autenticar(req: RequestAutenticado, res: Response, next: NextFun
         const payload = jwt.verify(token, JWT_SECRET) as {
             id: number;
             nome: string;
-            role: "admin" | "comum";
+            role: "admin" | "comum" | "leitor";
         };
 
         req.conta = payload;
@@ -38,6 +38,14 @@ export function autenticar(req: RequestAutenticado, res: Response, next: NextFun
 export function apenasAdmin(req: RequestAutenticado, res: Response, next: NextFunction) {
     if (req.conta?.role !== "admin") {
         return res.status(403).json({ error: "Acesso restrito a administradores" });
+    }
+
+    next();
+}
+
+export function apenasFuncionario(req: RequestAutenticado, res: Response, next: NextFunction) {
+    if  (req.conta?.role !== "admin" && req.conta?.role !== "comum") {
+        return res.status(403).json({ error: "Acesso restrito à equipe da biblioteca" });
     }
 
     next();

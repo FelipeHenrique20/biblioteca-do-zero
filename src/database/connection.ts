@@ -55,6 +55,12 @@ export function initDatabase() {
             createdAt TEXT NOT NULL DEFAULT (datetime('now'))
         );
     `)
+
+    try {
+        db.exec(`ALTER TABLE usuarios ADD COLUMN senhaHash TEXT;`);
+    } catch {
+        // coluna já existe, ignora
+    }
     
     // EMPRESTIMOS
     db.exec(`
