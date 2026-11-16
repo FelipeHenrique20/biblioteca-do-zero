@@ -50,3 +50,11 @@ export function apenasFuncionario(req: RequestAutenticado, res: Response, next: 
 
     next();
 }
+
+export function apenasLeitor(req: RequestAutenticado, res: Response, next: NextFunction) {
+    if  ( req.conta?.role !== "leitor") {
+        return res.status(403).json({ error: "Acesso restrito a leitores" });
+    }
+
+    next();
+}

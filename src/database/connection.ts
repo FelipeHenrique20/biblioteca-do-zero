@@ -75,6 +75,12 @@ export function initDatabase() {
         );
     `)
 
+    try {
+        db.exec(`ALTER TABLE emprestimos ADD COLUMN status TEXT NOT NULL DEFAULT 'aprovado';`);
+    } catch {
+        // coluna já existe, ignora
+    }
+
     // CONTAS
     db.exec(`
         CREATE TABLE IF NOT EXISTS contas (
